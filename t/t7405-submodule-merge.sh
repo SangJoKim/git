@@ -335,6 +335,19 @@ test_expect_failure 'file/submodule conflict' '
 	)
 '
 
+test_expect_success 'file/submodule conflict; merge --abort works afterward' '
+	test_when_finished "git -C file-submodule reset --hard" &&
+	(
+		cd file-submodule &&
+
+		git checkout A^0 &&
+		test_must_fail git merge B^0 >out 2>err &&
+
+		test_path_is_file .git/MERGE_HEAD &&
+		git merge --abort
+	)
+'
+
 # Directory/submodule conflict
 #   Commit O: <empty>
 #   Commit A: path (submodule), with sole tracked file named 'world'
@@ -422,7 +435,20 @@ test_expect_failure 'directory/submodule conflict; should not treat submodule fi
 		# merge from starting; we should not be writing to such paths
 		# anyway.
 		test_i18ngrep ! "refusing to lose untracked file at" err
+	)
+'
 
+test_expect_failure 'directory/submodule conflict; merge --abort works afterward' '
+	test_when_finished "git -C directory-submodule/path reset --hard" &&
+	test_when_finished "git -C directory-submodule reset --hard" &&
+	(
+		cd directory-submodule &&
+
+		git checkout A^0 &&
+		test_must_fail git merge B2^0 >out 2>err &&
+
+		test_path_is_file .git/MERGE_HEAD &&
+		git merge --abort
 	)
 '
 
