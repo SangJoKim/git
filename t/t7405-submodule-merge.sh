@@ -279,4 +279,60 @@ test_expect_success 'recursive merge with submodule' '
 	 grep "$(cat expect3)" actual > /dev/null)
 '
 
+# File/submodule conflict
+#   Commit O: <empty>
+#   Commit A: path (submodule)
+#   Commit B: path
+#   Expected: path/ is submodule and file contents for B's path are somewhere
+
+test_expect_success 'setup file/submodule conflict' '
+	test_create_repo file-submodule &&
+	(
+		cd file-submodule &&
+
+		git commit --allow-empty -m O &&
+
+		git branch A &&
+		git branch B &&
+
+		git checkout B &&
+		echo contents >path &&
+		git add path &&
+		git commit -m B &&
+
+		git checkout A &&
+		test_create_repo path &&
+		(
+			cd path &&
+
+			echo hello >world &&
+			git add world &&
+			git commit -m "submodule"
+		) &&
+		git add path &&
+		git commit -m A
+	)
+'
+
+test_expect_failure 'file/submodule conflict' '
+	test_when_finished "git -C file-submodule reset --hard" &&
+	(
+		cd file-submodule &&
+
+		git checkout A^0 &&
+		test_must_fail git merge B^0 >out 2>err &&
+
+		git ls-files -s >out &&
+		test_line_count = 2 out &&
+		git ls-files -u >out &&
+		test_line_count = 2 out &&
+
+		# path/ is still a submodule
+		test_path_is_dir path/.git &&
+
+		echo Checking if contents from B:path showed up anywhere &&
+		grep -q content * 2>/dev/null
+	)
+'
+
 test_done
