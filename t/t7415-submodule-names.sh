@@ -176,4 +176,18 @@ test_expect_success 'fsck detects non-blob .gitmodules' '
 	)
 '
 
+test_expect_success 'fsck does not complain about corrupt .gitmodules' '
+	git init corrupt &&
+	(
+		cd corrupt &&
+
+		echo "[broken" >.gitmodules &&
+		git add .gitmodules &&
+		git commit -m "broken gitmodules" &&
+
+		git fsck 2>output &&
+		! test -s output
+	)
+'
+
 test_done
