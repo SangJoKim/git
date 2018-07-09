@@ -923,7 +923,7 @@ test_expect_success 'push into aliased refs (consistent)' '
 	(
 		cd child1 &&
 		git branch foo &&
-		git symbolic-ref refs/heads/bar refs/heads/foo
+		git symbolic-ref refs/heads/bar refs/heads/foo &&
 		git config receive.denyCurrentBranch false
 	) &&
 	(
@@ -945,7 +945,7 @@ test_expect_success 'push into aliased refs (inconsistent)' '
 	(
 		cd child1 &&
 		git branch foo &&
-		git symbolic-ref refs/heads/bar refs/heads/foo
+		git symbolic-ref refs/heads/bar refs/heads/foo &&
 		git config receive.denyCurrentBranch false
 	) &&
 	(
@@ -1053,7 +1053,7 @@ test_expect_success 'push --porcelain rejected' '
 	mk_empty testrepo &&
 	git push testrepo refs/heads/master:refs/remotes/origin/master &&
 	(cd testrepo &&
-		git reset --hard origin/master^
+		git reset --hard origin/master^ &&
 		git config receive.denyCurrentBranch true) &&
 
 	echo >.git/foo  "To testrepo"  &&
@@ -1067,7 +1067,7 @@ test_expect_success 'push --porcelain --dry-run rejected' '
 	mk_empty testrepo &&
 	git push testrepo refs/heads/master:refs/remotes/origin/master &&
 	(cd testrepo &&
-		git reset --hard origin/master
+		git reset --hard origin/master &&
 		git config receive.denyCurrentBranch true) &&
 
 	echo >.git/foo  "To testrepo"  &&
@@ -1375,7 +1375,7 @@ test_expect_success 'push --follow-tag only pushes relevant tags' '
 		git commit --allow-empty -m "future commit" &&
 		git tag -m "future" future &&
 		git checkout master &&
-		git for-each-ref refs/heads/master refs/tags/tag >../expect
+		git for-each-ref refs/heads/master refs/tags/tag >../expect &&
 		git push --follow-tag ../dst master
 	) &&
 	(
