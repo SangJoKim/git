@@ -1219,12 +1219,12 @@ test_expect_success 'setup conflicting modes for regular file' '
 		git tag A &&
 
 		git checkout -b B A &&
-		echo "export PATH=~/bin:$PATH" >source_me.bash &&
+		echo "command_to_run" >source_me.bash &&
 		git add source_me.bash &&
 		git commit -m B &&
 
 		git checkout -b C A &&
-		echo "export PATH=~/bin:$PATH" >source_me.bash &&
+		echo "command_to_run" >source_me.bash &&
 		git add source_me.bash &&
 		test_chmod +x source_me.bash &&
 		git commit -m C &&
