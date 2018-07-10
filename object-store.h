@@ -84,6 +84,32 @@ struct packed_git {
 	char pack_name[FLEX_ARRAY]; /* more */
 };
 
+struct multi_pack_index {
+	struct multi_pack_index *next;
+
+	int fd;
+
+	const unsigned char *data;
+	size_t data_len;
+
+	uint32_t signature;
+	unsigned char version;
+	unsigned char hash_len;
+	unsigned char num_chunks;
+	uint32_t num_packs;
+	uint32_t num_objects;
+
+	const unsigned char *chunk_pack_names;
+	const uint32_t *chunk_oid_fanout;
+	const unsigned char *chunk_oid_lookup;
+	const unsigned char *chunk_object_offsets;
+	const unsigned char *chunk_large_offsets;
+
+	const char **pack_names;
+	struct packed_git **packs;
+	char object_dir[FLEX_ARRAY];
+};
+
 struct raw_object_store {
 	/*
 	 * Path to the repository's object store.
@@ -102,6 +128,13 @@ struct raw_object_store {
 	 * (see git-replace(1)).
 	 */
 	struct oidmap *replace_map;
+
+	/*
+	 * private data
+	 *
+	 * should only be accessed directly by packfile.c and midx.c
+	 */
+	struct multi_pack_index *multi_pack_index;
 
 	/*
 	 * private data
