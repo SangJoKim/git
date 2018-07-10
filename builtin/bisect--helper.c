@@ -231,7 +231,7 @@ static int bisect_write(const char *state, const char *rev,
 		goto fail;
 	}
 
-	commit = lookup_commit_reference(&oid);
+	commit = lookup_commit_reference(the_repository, &oid);
 	log_commit(fp, "%s", state, commit);
 
 	if (!nolog)
