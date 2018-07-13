@@ -23,7 +23,8 @@
 #include "graph.h"
 #include "packfile.h"
 #include "help.h"
-
+#include <stdlib.h>
+ 
 #ifdef NO_FAST_WORKING_DIRECTORY
 #define FAST_WORKING_DIRECTORY 0
 #else
